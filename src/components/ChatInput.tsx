@@ -1,44 +1,27 @@
 import React, { useState, useRef } from 'react';
-import { Paperclip, Mic, Send, Plus } from 'lucide-react';
 
 interface ChatInputProps {
   onSendMessage: (text: string) => void;
-  onNewSession: () => void;
   isLoading?: boolean;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({
-  onSendMessage,
-  onNewSession,
-  isLoading,
-}) => {
+export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }) => {
   const [input, setInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-    onSendMessage(input);
+    onSendMessage(input.trim());
     setInput('');
   };
 
   return (
-    <div className="sticky bottom-16 left-0 right-0 z-30 px-4 py-2 bg-gradient-to-t from-gray-50 via-gray-50/90 to-transparent dark:from-gray-900 dark:via-gray-900/90">
-      <div className="relative max-w-md mx-auto flex flex-col items-end">
-        {/* Floating "+" button above send button to start new session */}
-        <button
-          type="button"
-          onClick={onNewSession}
-          className="mb-2 p-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 transition-transform active:scale-95 cursor-pointer"
-          title="New Chat Session"
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-
-        {/* Input Pill Bar */}
+    <div className="p-4 glass-panel border-t border-[var(--color-outline-variant)]/30 sticky bottom-0 left-0 right-0 z-30">
+      <div className="max-w-3xl mx-auto relative">
         <form
           onSubmit={handleSubmit}
-          className="w-full flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 rounded-full px-4 py-2 shadow-lg shadow-gray-200/50 dark:shadow-none focus-within:ring-2 focus-within:ring-indigo-500/40 transition-all"
+          className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)]/50 focus-within:border-[var(--color-primary)] focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 rounded-2xl transition-all flex items-end p-2 gap-2 shadow-xs"
         >
           <input
             type="file"
@@ -48,47 +31,60 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                onSendMessage(`Uploaded file: ${file.name} for review.`);
+                onSendMessage(`Uploaded CV: ${file.name} for ATS review.`);
               }
             }}
           />
 
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            title="Attach document"
-          >
-            <Paperclip className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1 pb-1">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 hover:bg-[var(--color-surface-container-low)] rounded-xl text-[var(--color-on-surface-variant)] transition-colors"
+              title="Attach document"
+            >
+              <span className="material-symbols-outlined text-xl">attach_file</span>
+            </button>
+          </div>
 
-          <input
-            type="text"
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
             placeholder="Type your career question..."
+            rows={1}
             disabled={isLoading}
-            className="flex-1 bg-transparent text-xs sm:text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none px-1"
+            className="flex-1 bg-transparent border-none focus:ring-0 resize-none py-2 px-2 text-sm text-[var(--color-on-surface)] placeholder-[var(--color-on-surface-variant)]/60 focus:outline-none"
           />
 
-          <button
-            type="button"
-            onClick={() => setInput('Can you help me practice a behavioral interview question?')}
-            className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-            title="Voice input simulation"
-          >
-            <Mic className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1.5 pb-1">
+            <button
+              type="button"
+              onClick={() => setInput('How can I prepare for a Senior Tech Lead interview in India?')}
+              className="p-2 hover:bg-[var(--color-surface-container-low)] rounded-xl text-[var(--color-on-surface-variant)] transition-colors"
+              title="Voice prompt simulation"
+            >
+              <span className="material-symbols-outlined text-xl">mic</span>
+            </button>
 
-          {/* Circular send button (indigo arrow icon) */}
-          <button
-            type="submit"
-            disabled={!input.trim() || isLoading}
-            className="w-8 h-8 rounded-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white flex items-center justify-center shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
-          >
-            <Send className="w-3.5 h-3.5" />
-          </button>
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading}
+              className="bg-[var(--color-primary)] text-white p-2.5 rounded-xl hover:scale-105 active:scale-95 disabled:opacity-40 transition-all shadow-md shrink-0 cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-lg">send</span>
+            </button>
+          </div>
         </form>
+
+        <p className="text-[10px] text-center mt-2 text-[var(--color-on-surface-variant)]/80">
+          CareerAI provides actionable guidance tailored for Indian professionals.
+        </p>
       </div>
     </div>
   );

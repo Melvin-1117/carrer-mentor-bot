@@ -1,60 +1,67 @@
 import React from 'react';
-import { Menu, Bot, Moon, Sun, Bell, CircleDot } from 'lucide-react';
 
 interface HeaderProps {
   darkMode: boolean;
   onToggleDarkMode: () => void;
-  onOpenMenu?: () => void;
+  onToggleDrawer: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ darkMode, onToggleDarkMode, onOpenMenu }) => {
+export const Header: React.FC<HeaderProps> = ({
+  darkMode,
+  onToggleDarkMode,
+  onToggleDrawer,
+}) => {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3.5 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 transition-colors">
-      {/* Left: Hamburger menu */}
-      <button
-        onClick={onOpenMenu}
-        className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        aria-label="Open menu"
-      >
-        <Menu className="w-5 h-5" />
-      </button>
+    <header className="w-full top-0 sticky z-40 bg-[var(--color-background)]/80 backdrop-blur-md border-b border-[var(--color-outline-variant)]/30 shadow-xs flex justify-between items-center px-4 py-3 max-w-6xl mx-auto transition-colors">
+      {/* Left: Drawer Toggle + Logo + AI Online Badge */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onToggleDrawer}
+          className="p-2 hover:bg-[var(--color-surface-container-high)] rounded-full transition-colors"
+          aria-label="Toggle history menu"
+        >
+          <span className="material-symbols-outlined text-[var(--color-primary)]">menu</span>
+        </button>
 
-      {/* Center-left: Logo icon + Wordmark */}
-      <div className="flex items-center gap-2.5">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-800 text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
-          <Bot className="w-5 h-5" />
+        <div className="flex items-center gap-1.5 cursor-pointer">
+          <span className="material-symbols-outlined text-[var(--color-primary)] text-3xl fill-1">
+            smart_toy
+          </span>
+          <h1 className="text-xl font-bold text-[var(--color-primary)] font-['Geist'] tracking-tight">
+            CareerAI
+          </h1>
         </div>
-        <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-indigo-800 dark:from-indigo-400 dark:to-indigo-300 bg-clip-text text-transparent">
-          CareerAI
-        </span>
+
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-[var(--color-surface-container-low)] rounded-full border border-[var(--color-outline-variant)]/20">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-xs font-semibold text-[var(--color-on-surface-variant)]">AI Online</span>
+        </div>
       </div>
 
-      {/* Right side: Dark mode half-circle toggle, bell, avatar */}
-      <div className="flex items-center gap-1.5">
+      {/* Right controls: Contrast toggle, Bell, User Avatar */}
+      <div className="flex items-center gap-2">
         <button
           onClick={onToggleDarkMode}
-          className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          title="Toggle Dark Mode"
+          className="p-2 text-[var(--color-on-surface-variant)] hover:opacity-80 transition-opacity rounded-full"
+          title="Toggle Theme"
         >
-          {/* Half-filled circle icon indicator as requested */}
-          <CircleDot className={`w-5 h-5 ${darkMode ? 'text-amber-400' : 'text-indigo-600'}`} />
+          <span className="material-symbols-outlined">contrast</span>
         </button>
 
         <button
-          className="relative p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="p-2 text-[var(--color-on-surface-variant)] hover:opacity-80 transition-opacity rounded-full relative"
           title="Notifications"
         >
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-gray-900" />
+          <span className="material-symbols-outlined">notifications</span>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
         </button>
 
-        <div className="relative ml-1 cursor-pointer">
+        <div className="w-9 h-9 rounded-full border-2 border-[var(--color-primary)] overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm">
           <img
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop"
-            alt="User avatar"
-            className="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-500/40 hover:ring-indigo-600 transition-all shadow-sm"
+            className="w-full h-full object-cover"
+            alt="Alex Chen Profile"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwbyTZx2TieZrC0h5Nvh0BjCmGjccH8PhbjNa6Znpeh6541yn8M-o7xANRIyMPwgjJHMiuIEnx700c6BBvMsmu7clRRpqMHTn3w5z2Y7ApZ-A1UewTf4nXiTmx3EYWG64iwz5L-T4JQ_ngwnn8c_x7Il6nGU6g1_LffOSfWVjsGSAgpfO3uD0C8FPNMmPWJaeP-coA07-c-hKBtd3WE-g7igtIZuApYA0sKwpH8R8iaZcAhZPZGyxIfA"
           />
-          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-gray-900 rounded-full" />
         </div>
       </div>
     </header>

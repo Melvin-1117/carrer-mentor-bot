@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { ChatInput } from './components/ChatInput';
+import { SidebarDrawer } from './components/SidebarDrawer';
+import { FabMenu } from './components/FabMenu';
 import { DashboardScreen } from './screens/DashboardScreen';
 import { MentorScreen } from './screens/MentorScreen';
 import { RoadmapScreen } from './screens/RoadmapScreen';
@@ -17,10 +19,11 @@ import {
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Sync dark mode with document root class
+  // Sync dark mode class with root html
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -29,7 +32,7 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Initial Suggestion Cards matching the reference design
+  // Cards matching reference prompt grid
   const suggestionCards: SuggestionCardItem[] = [
     {
       id: 'resume-audit',
@@ -54,19 +57,19 @@ export default function App() {
     },
   ];
 
-  // Stats for Dashboard Below the Fold
+  // Stats below the fold
   const stats: StatItem[] = [
-    { id: '1', label: 'ATS CV Match', value: '88/100', change: '+12%', iconName: 'score' },
-    { id: '2', label: 'Roadmap Target', value: '₹35 LPA', change: '+15%', iconName: 'roadmap' },
+    { id: '1', label: 'ATS CV Score', value: '88/100', change: '+12%', iconName: 'score' },
+    { id: '2', label: 'Roadmap Progress', value: '65%', change: '+5%', iconName: 'roadmap' },
     { id: '3', label: 'Mock Practice', value: '4 Sessions', iconName: 'interview' },
   ];
 
-  // Roadmap Steps with Indian LPA Compensation metrics
+  // Roadmap Steps with Indian LPA metrics
   const [roadmapSteps, setRoadmapSteps] = useState<RoadmapStepItem[]>([
     {
       id: 'step-1',
       level: 'Level 1',
-      title: 'SDE-1 / Associate Engineer',
+      title: 'Junior SDE / Associate Engineer',
       salary: '₹6 LPA - ₹12 LPA',
       skills: ['Git & Clean Code Principles', 'DSA & Problem Solving', 'REST APIs & Node/React Core'],
       completed: true,
@@ -77,7 +80,7 @@ export default function App() {
       level: 'Level 2',
       title: 'SDE-2 / Mid-Level Software Engineer',
       salary: '₹14 LPA - ₹24 LPA',
-      skills: ['TypeScript & Advanced Frameworks', 'Microservices & Database Optimization', 'CI/CD Pipelines & Unit Testing'],
+      skills: ['TypeScript & Modern Frameworks', 'Microservices & Database Optimization', 'CI/CD Pipelines & Unit Testing'],
       completed: true,
       progressPercent: 100,
     },
@@ -86,7 +89,7 @@ export default function App() {
       level: 'Level 3',
       title: 'Senior SDE / Tech Lead',
       salary: '₹26 LPA - ₹45 LPA',
-      skills: ['System Architecture & Scalability (HLD)', 'Low-Level Design (LLD) & Machine Coding', 'RFC Documents & Mentorship'],
+      skills: ['System Architecture & Scalability (HLD)', 'Low-Level Design (LLD) & Machine Coding', 'RFC Documents & Technical Mentorship'],
       completed: false,
       progressPercent: 65,
     },
@@ -115,7 +118,6 @@ export default function App() {
     );
   };
 
-  // Send message handler using Indian Career AI client
   const handleSendMessage = async (text: string) => {
     const userMsg: Message = {
       id: Date.now().toString(),
@@ -152,29 +154,34 @@ export default function App() {
     }
   };
 
-  // Tapping suggestion card immediately switches to Mentor tab and sends prompt
   const handleSelectSuggestionCard = (card: SuggestionCardItem) => {
     handleSendMessage(card.prompt);
   };
 
-  const handleNewSession = () => {
-    setMessages([]);
-    setActiveTab('dashboard');
+  const handleSelectSessionFromDrawer = (sessionTitle: string) => {
+    handleSendMessage(`Review session context: ${sessionTitle}`);
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F7FB] dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
-      {/* Container wrapper ensuring cross-platform desktop/mobile support */}
-      <div className="flex flex-col min-h-screen w-full max-w-md mx-auto bg-[#F5F7FB] dark:bg-gray-900 border-x border-gray-100 dark:border-gray-800 shadow-xl relative">
-        {/* Header (persistent) */}
-        <Header
-          darkMode={darkMode}
-          onToggleDarkMode={() => setDarkMode(!darkMode)}
-          onOpenMenu={() => setActiveTab('dashboard')}
+    <div className="bg-[var(--color-background)] text-[var(--color-on-surface)] min-h-screen flex flex-col overflow-hidden">
+      {/* Top Header */}
+      <Header
+        darkMode={darkMode}
+        onToggleDarkMode={() => setDarkMode(!darkMode)}
+        onToggleDrawer={() => setIsDrawerOpen(true)}
+      />
+
+      {/* Main Layout Canvas */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Slide-out Navigation History Drawer */}
+        <SidebarDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          onSelectSession={handleSelectSessionFromDrawer}
         />
 
-        {/* Screens area */}
-        <main className="flex-1 flex flex-col relative overflow-hidden">
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col relative bg-[var(--color-background)] h-full overflow-hidden">
           {activeTab === 'dashboard' && (
             <DashboardScreen
               cards={suggestionCards}
@@ -187,7 +194,8 @@ export default function App() {
             <MentorScreen
               messages={messages}
               isLoading={isLoading}
-              onClearHistory={handleNewSession}
+              onClearHistory={() => setMessages([])}
+              onSendMessage={handleSendMessage}
             />
           )}
 
@@ -197,18 +205,17 @@ export default function App() {
               onToggleComplete={toggleRoadmapComplete}
             />
           )}
+
+          {/* Sticky Chat Input Bar */}
+          <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+
+          {/* Floating Action Button (Collapsible Quick Actions) */}
+          <FabMenu onQuickAction={handleSendMessage} />
         </main>
-
-        {/* Floating Chat Input Bar (persistent) */}
-        <ChatInput
-          onSendMessage={handleSendMessage}
-          onNewSession={handleNewSession}
-          isLoading={isLoading}
-        />
-
-        {/* Bottom Tab Navigation */}
-        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
+
+      {/* Bottom Tab Navigation */}
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 }
