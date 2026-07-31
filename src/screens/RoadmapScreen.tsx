@@ -17,16 +17,16 @@ export const RoadmapScreen: React.FC<RoadmapScreenProps> = ({ steps, onToggleCom
       <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-2xl p-4 text-white shadow-lg mb-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-md">
-            Career Growth Track
+            Indian Tech Career Track
           </span>
           <span className="text-xs font-bold text-indigo-100">
-            {completedCount} of {steps.length} Stages Mastered
+            {completedCount} of {steps.length} Milestones Mastered
           </span>
         </div>
-        <h2 className="text-xl font-extrabold">Software Engineering Path</h2>
+        <h2 className="text-xl font-extrabold">Software Engineering Roadmap (₹ LPA)</h2>
         <div className="mt-3">
           <div className="flex justify-between text-xs mb-1 font-medium text-indigo-100">
-            <span>Roadmap Completion</span>
+            <span>Progress to Senior SDE (₹35+ LPA)</span>
             <span>{overallProgress}%</span>
           </div>
           <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">

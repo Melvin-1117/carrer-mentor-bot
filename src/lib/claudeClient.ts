@@ -1,6 +1,13 @@
 import { Message } from '../types/chat';
 
-const SYSTEM_PROMPT = `You are CareerAI, an expert career mentor and coach. Give practical, encouraging, and specific advice on resumes, interview prep, and skill development. Keep responses concise, use bullet points for lists, and ask a clarifying follow-up question when helpful.`;
+const INDIAN_CAREER_SYSTEM_PROMPT = `You are CareerAI, an expert career mentor and executive coach specializing in the Indian technology and corporate ecosystem.
+
+Your guidance is tailored specifically for job seekers, software engineers, product managers, and professionals in India:
+1. Provide practical advice relevant to Indian tech hubs (Bengaluru, Hyderabad, Pune, NCR/Gurugram/Noida, Mumbai, Chennai).
+2. Format compensation and salary insights in ₹ Lakhs Per Annum (LPA) and CTC (Cost to Company) structures, distinguishing between Base Pay, ESOPs, and Joining Bonuses.
+3. Understand career trajectories across Indian product unicorns (Flipkart, Swiggy, Zomato, Razorpay, Zerodha), global R&D MNCs (Google India, Microsoft IDC, Amazon, Adobe), and IT service leaders (TCS, Infosys, Wipro, LTIMindtree).
+4. Offer specialized advice on Machine Coding rounds, DSA/LeetCode preparation, System Design, ATS resume optimization for Indian HR portals (Naukri, LinkedIn, Instahyre), and salary negotiation strategies.
+5. Keep responses encouraging, highly structured (use bullet points and markdown bolding), and concise. Ask a clarifying follow-up question when helpful.`;
 
 export async function sendClaudeMessage(messages: Message[]): Promise<string> {
   const formattedMessages = messages.map((m) => ({
@@ -17,14 +24,13 @@ export async function sendClaudeMessage(messages: Message[]): Promise<string> {
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 1000,
-        system: SYSTEM_PROMPT,
+        system: INDIAN_CAREER_SYSTEM_PROMPT,
         messages: formattedMessages,
       }),
     });
 
     if (!response.ok) {
-      // Fallback to intelligent mentor response if API endpoint is unroutable locally
-      return generateFallbackMentorResponse(messages[messages.length - 1]?.text || '');
+      return generateIndianCareerFallbackResponse(messages[messages.length - 1]?.text || '');
     }
 
     const data = await response.json();
@@ -32,57 +38,59 @@ export async function sendClaudeMessage(messages: Message[]): Promise<string> {
       return data.content[0].text;
     }
 
-    return generateFallbackMentorResponse(messages[messages.length - 1]?.text || '');
+    return generateIndianCareerFallbackResponse(messages[messages.length - 1]?.text || '');
   } catch (error) {
-    console.warn('Anthropic API request failed, utilizing local mentor fallback:', error);
-    return generateFallbackMentorResponse(messages[messages.length - 1]?.text || '');
+    console.warn('Anthropic API request failed, utilizing Indian Career Mentor local engine:', error);
+    return generateIndianCareerFallbackResponse(messages[messages.length - 1]?.text || '');
   }
 }
 
-function generateFallbackMentorResponse(userPrompt: string): string {
+function generateIndianCareerFallbackResponse(userPrompt: string): string {
   const lower = userPrompt.toLowerCase();
 
   if (lower.includes('resume') || lower.includes('cv') || lower.includes('ats')) {
-    return `### 📄 **ATS Resume Audit Results**
+    return `### 📄 **Indian Tech ATS Resume Audit**
 
-Here is your instant breakdown to optimize your CV for top tech ATS screeners:
+Here is your optimization report tailored for Indian hiring portals (Naukri, LinkedIn India, Instahyre):
 
-* **ATS Compatibility Score**: **88 / 100** (Strong baseline)
-* **Impact Quantifiers**: Add concrete metrics to at least 3 bullet points (e.g., *"Reduced API latency by 42%"* or *"Boosted DAU by 150k"*).
-* **Keywords Detected**: React, TypeScript, Node.js, System Architecture, CI/CD.
+* **ATS Compatibility Score**: **88 / 100** (Strong match for Tier-1 Product & MNC hiring)
+* **Key Metric Highlights**: Quantify impact with clear numbers (e.g., *"Scaled microservices to handle 5M+ daily requests during festival sales"*)
+* **Recruiter Keyword Coverage**: React, TypeScript, System Design, Microservices, Redis, Kafka, AWS.
 
-**Recommended Action**: Would you like me to rewrite your professional summary or top experience section to highlight leadership impact?`;
+**Pro-Tip for Indian Market**: Ensure your top summary specifies total years of experience, core tech stack, and current notice period (e.g., *Immediate / 15-30 days*) for faster shortlist calls!
+
+Would you like me to rewrite your executive summary or work experience bullet points?`;
   }
 
   if (lower.includes('roadmap') || lower.includes('senior') || lower.includes('skill')) {
-    return `### 🧬 **Step-by-Step Senior Engineer Roadmap**
+    return `### 🧬 **Indian Tech Career Growth Roadmap**
 
-To transition from Mid-Level to Senior Software Engineer, focus on these 3 core pillars:
+To transition from SDE-2 to Senior SDE (₹25 LPA – ₹45+ LPA CTC band):
 
-1. **System Architecture**: Master distributed caching (Redis), event queues (Kafka), and database partitioning.
-2. **Cross-Functional Ownership**: Drive RFC proposals and sponsor junior developers through code reviews.
-3. **Business Metrics Alignment**: Connect engineering velocity directly to product OKRs.
+1. **Machine Coding & LLD**: Master Low-Level Design (OOD, Design Patterns) in 90-minute timed rounds.
+2. **System Architecture & HLD**: Master distributed databases, caching strategies, and message brokers (Kafka/RabbitMQ).
+3. **Product & Business Impact**: Demonstrate ownership over end-to-end service reliability and team RFC reviews.
 
-What specific technical area would you like to level up first?`;
+Which technical focus area (Machine Coding, System Design, or Salary Negotiation) would you like to explore next?`;
   }
 
   if (lower.includes('mock') || lower.includes('interview') || lower.includes('behavioral')) {
-    return `### 📣 **Mock Behavioral Interview Session**
+    return `### 📣 **Indian Tech Mock Behavioral & Leadership Practice**
 
-Let's practice the **STAR Method** (Situation, Task, Action, Result). Here is your first question:
+Behavioral and System Ownership rounds are critical for SDE-2 / Senior roles. Here is your question:
 
-*"Tell me about a time when you had to make an urgent architectural trade-off under strict deadlines. How did you communicate the risk to stakeholders?"*
+*"Tell me about a time when you had to resolve a high-severity production outage or critical technical conflict between engineering and product timelines. How did you handle it?"*
 
-Respond whenever you're ready, and I will evaluate your answer with feedback and a score!`;
+Respond when ready using the **STAR Method** (Situation, Task, Action, Result), and I will provide instant evaluation!`;
   }
 
-  return `### 💡 **Career Mentor Guidance**
+  return `### 🇮🇳 **CareerAI Mentor Guidance**
 
-That's a fantastic question! To help you achieve your professional goals:
+Great question! To accelerate your career progression in the Indian tech ecosystem:
 
-* **Focus on Value**: Ensure your technical achievements directly translate to team productivity or business metrics.
-* **Continuous Mentorship**: Learn through pair programming and regular 1-on-1 feedback sessions.
-* **Portfolio Positioning**: Highlight end-to-end system design rather than simple feature implementations.
+* **Target High-Growth Product Ecosystems**: Focus on core engineering fundamentals (DSA + System Design).
+* **Compensation Optimization**: Understand your CTC structure (Base Salary, Performance Variable, ESOP vesting schedules).
+* **Strategic Networking**: Leverage referral channels on LinkedIn and Instahyre for direct HR interviews.
 
-What is the next step you'd like to work on together?`;
+What specific milestone would you like to work on today?`;
 }
