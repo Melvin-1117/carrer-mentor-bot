@@ -23,7 +23,6 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Sync dark mode class with root html
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -32,7 +31,6 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Cards matching reference prompt grid
   const suggestionCards: SuggestionCardItem[] = [
     {
       id: 'resume-audit',
@@ -57,14 +55,12 @@ export default function App() {
     },
   ];
 
-  // Stats below the fold
   const stats: StatItem[] = [
     { id: '1', label: 'ATS CV Score', value: '88/100', change: '+12%', iconName: 'score' },
-    { id: '2', label: 'Roadmap Progress', value: '65%', change: '+5%', iconName: 'roadmap' },
+    { id: '2', label: 'Roadmap Target', value: '₹35 LPA', change: '+15%', iconName: 'roadmap' },
     { id: '3', label: 'Mock Practice', value: '4 Sessions', iconName: 'interview' },
   ];
 
-  // Roadmap Steps with Indian LPA metrics
   const [roadmapSteps, setRoadmapSteps] = useState<RoadmapStepItem[]>([
     {
       id: 'step-1',
@@ -171,8 +167,8 @@ export default function App() {
         onToggleDrawer={() => setIsDrawerOpen(true)}
       />
 
-      {/* Main Layout Canvas */}
-      <div className="flex flex-1 overflow-hidden relative">
+      {/* Main Full-Width Platform Canvas */}
+      <div className="flex flex-1 overflow-hidden relative max-w-7xl mx-auto w-full">
         {/* Slide-out Navigation History Drawer */}
         <SidebarDrawer
           isOpen={isDrawerOpen}
@@ -180,7 +176,7 @@ export default function App() {
           onSelectSession={handleSelectSessionFromDrawer}
         />
 
-        {/* Main Content Area */}
+        {/* Main Platform Content */}
         <main className="flex-1 flex flex-col relative bg-[var(--color-background)] h-full overflow-hidden">
           {activeTab === 'dashboard' && (
             <DashboardScreen
@@ -209,7 +205,7 @@ export default function App() {
           {/* Sticky Chat Input Bar */}
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
 
-          {/* Floating Action Button (Collapsible Quick Actions) */}
+          {/* Floating Action Quick Menu */}
           <FabMenu onQuickAction={handleSendMessage} />
         </main>
       </div>
